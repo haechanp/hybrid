@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Photo Sharing</title>
+    <link rel="stylesheet" href="style.css"> <!-- 외부 CSS 파일 연결 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+    <nav>
+        <h1>Travel Photo Sharing</h1>
+    </nav>
+
+    <h1 class="title">세계 지도 - 대륙 선택</h1>
+    <div id="map"></div>
+
+    <!-- 팝업 창 -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="continent-title">대륙 선택</h2>
+            <div id="continent-map" style="height: 300px;"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // 메인 지도 초기화
+        var map = L.map('map').setView([20, 0], 2);
+
+        // 지도 타일 추가
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+        }).addTo(map);
+
+        // 대륙별 마커 및 국가 정보
+        var continents = {
+            'Asia': [34.0479, 100.6197],
+            'Europe': [54.5260, 15.2551],
+            'North America': [54.5260, -105.2551],
+            'South America': [-14.2350, -51.9253],
+            'Africa': [-8.7832, 34.5085],
+            'Australia': [-25.2744, 133.7751]
+        };
+
+        var countries = {
+            'Asia': {
+                'China': [35.8617, 104.1954],
+                'India': [20.5937, 78.9629],
+                'Japan': [36.2048, 138.2529],
+                'South Korea': [35.9078, 127.7669]
+            },
+            'Europe': {
+                'France': [46.6034, 1.8883],
+                'Germany': [51.1657, 10.4515],
+                'Italy': [41.8719, 12.5674],
+                'Spain': [40.4637, -3.7492]
+            },
+            'North America': {
+                'Canada': [56.1304, -106.3468],
+                'Mexico': [23.6345, -102.5528],
+                'United States': [37.0902, -95.7129]
+            },
+            'South America': {
+                'Argentina': [-38.4161, -63.6167],
+                'Brazil': [-14.2350, -51.9253],
+                'Chile': [-35.6751, -71.5429]
+            },
+            'Africa': {
+                'Egypt': [26.8206, 30.8025],
+                'Kenya': [-0.0236, 37.9062],
+                'South Africa': [-30.5595, 22.9375]
+            },
+            'Australia': {
+                'Australia': [-25.2744, 133.7751],
+                'New Zealand': [-40.9006, 174.8860]
+            }
+        };
+
+        // 대륙 마커 생성
+        for (var continent in continents) {
+            L.marker(continents[continent]).addTo(map)
+                .bindPopup(continent)
+                .on('click', function(e) {
+                    var continentName = e.target.getPopup().getContent();
+                    openPopup(continentName);
+                });
+        }
+
+        // 팝업 열기
+        function openPopup(continentName) {
+            var popup = document.getElementById("popup");
+            var title = document.getElementById("continent-title");
+            var continentMapDiv = document.getElementById("continent-map");
+            title.textContent = continentName;
+
+            // 작은 지도 초기화
+            var continentMap = L.map(continentMapDiv).setView(continents[continentName], 3);
+
+            // 작은 지도 타일 추가
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+            }).addTo(continentMap);
+
+            // 국가 마커 추가
+            for (var country in countries[continentName]) {
+                var coords = countries[continentName][country];
+                L.marker(coords).addTo(continentMap)
+                    .bindPopup(country)
+                    .on('click', function(e) {
+                        var countryName = e.target.getPopup().getContent();
+                        window.location.href = countryName.toLowerCase().replace(/ /g, '-') + '.html';
+                    });
+            }
+
+            popup.style.display = 'block';
+        }
+
+        // 팝업 닫기
+        document.querySelector('.close-btn').addEventListener('click', function() {
+            document.getElementById("popup").style.display = 'none';
+            // 팝업이 닫힐 때 작은 지도를 초기화
+            var continentMapDiv = document.getElementById("continent-map");
+            continentMapDiv.innerHTML = '';
+        });
+    </script>
+</body>
+</html>

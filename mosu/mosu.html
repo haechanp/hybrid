@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모스버거</title>
+
+    <!-- jQuery Mobile, jQuery 라이브러리 -->
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+    <!-- Leaflet.js CDN (지도) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- 사용자 정의 자바스크립트 파일 -->
+    <script src="menuHandle.js"></script>
+    <script src="orderHandle.js"></script>
+    <script src="locationHandle.js"></script>
+
+    <style>
+        /* 메뉴 보기 */
+        .menu-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .menu-item {
+            width: 200px;
+            height: 250px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #f7f7f7;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-item:hover {
+            transform: scale(1.05);
+        }
+
+        .menu-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .menu-item h3 {
+            font-size: 16px;
+            margin: 0;
+            color: #333;
+        }
+
+        /* 지도 */
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 시작 화면 -->
+<div data-role="page" id="homePage">
+    <div data-role="header" data-position="fixed" data-theme="b">
+        <h1>모스버거</h1>
+    </div>
+    <div data-role="content">
+        <img src="mosburger.jpg" alt="모스버거">
+        <ul data-role="listview" data-inset="true">
+            <li><a href="#orderPage">주문하기</a></li>
+            <li><a href="#menuPage">메뉴 보기</a></li>
+            <li><a href="#locationPage">가장 가까운 지점 찾기</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- 주문하기 페이지 -->
+<div data-role="page" id="orderPage">
+    <div data-role="header" data-position="fixed" data-theme="b">
+        <h1>주문하기</h1>
+    </div>
+    <div data-role="content">
+        <form>
+            <label for="burgerName">버거 이름:</label>
+            <input type="text" id="burgerName" name="burgerName">
+
+            <label for="quantity">수량:</label>
+            <input type="number" id="quantity" name="quantity" min="1" max="10">
+
+            <label for="extraOptions">추가 옵션:</label>
+            <textarea id="extraOptions" name="extraOptions"></textarea>
+
+            <button id="submitOrder" type="button">주문 추가</button>
+            <button id="clearOrder" type="button">초기화</button>
+        </form>
+    </div>
+</div>
+
+<!-- 메뉴 페이지 -->
+<div data-role="page" id="menuPage">
+    <div data-role="header" data-position="fixed" data-theme="b">
+        <h1>메뉴 보기</h1>
+    </div>
+    <div data-role="content">
+        <button id="loadMenu" type="button">메뉴 불러오기</button>
+        <div id="menuList" class="menu-container">
+            <!-- 메뉴 항목이 여기에 동적으로 추가됩니다. -->
+        </div>
+    </div>
+</div>
+
+<!-- 가장 가까운 지점 찾기 페이지 -->
+<div data-role="page" id="locationPage">
+    <div data-role="header" data-position="fixed" data-theme="b">
+        <h1>가장 가까운 지점 찾기</h1>
+    </div>
+    <div data-role="content">
+        <p>현재 위치:</p>
+        <div id="currentLocation">위치를 로드 중...</div>
+
+        <button id="findNearest" type="button">가까운 지점 찾기</button>
+
+        <!-- 지도 표시 영역 -->
+        <div id="map"></div>
+    </div>
+</div>
+
+</body>
+</html>
